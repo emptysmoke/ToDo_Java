@@ -1,6 +1,7 @@
 package com.todo.demo.service;
 
-import com.todo.demo.entity.Task;
+import com.todo.demo.dto.TaskDto;
+import com.todo.demo.mapper.TaskMapper;
 import com.todo.demo.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,16 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskDto> getAllTasks() {
+        return TaskMapper.toDtoList(taskRepository.findAll());
     }
 
-    public void createTask(Task task) {
-        taskRepository.save(task);
+    public void createTask(TaskDto dto) {
+        taskRepository.save(TaskMapper.toEntity(dto));
     }
+
+    // TO DO
+//    public void updateTask(TaskDto dto) { taskRepository.sa}
+
+    public void deleteTask(Long id) { taskRepository.deleteById(id);}
 }

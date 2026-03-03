@@ -1,12 +1,9 @@
 package com.todo.demo.controller;
 
-import com.todo.demo.entity.Task;
+import com.todo.demo.dto.TaskDto;
 import com.todo.demo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,14 +18,26 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
+    public List<TaskDto> getAll() {
         return taskService.getAllTasks();
     }
 
-    @PostMapping("/add")
-    public String addTask() {
-        Task task = new Task();
-        taskService.createTask(task);
+    @PostMapping("/create")
+    public String createTask(@RequestBody TaskDto dto) {
+        taskService.createTask(dto);
         return "タスクの追加に成功しました。";
+    }
+
+    //TO DO
+//    @PutMapping("/update")
+//    public String updateTask(@RequestBody TaskDto dto) {
+//        taskService.updateTask(dto);
+//        return "タスクが更新されました。";
+//    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return "削除されました。";
     }
 }
