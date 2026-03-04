@@ -1,7 +1,9 @@
 package com.todo.demo.dto;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -12,13 +14,15 @@ import java.time.LocalDateTime;
 public class TaskDto {
     private Long id;
 
-    @NonNull
+    @NotNull
+    @Size(max = 20, message = "タスク名は20文字以内で記入してください。")
     private String name;
 
-    @NonNull
+    @NotNull
+    @FutureOrPresent(message = "過去の日付は設定できません。")
     private LocalDate deadline;
 
-    private boolean completed;
+    private Boolean completed;
 
     private LocalDateTime createdAt;
 
@@ -27,7 +31,7 @@ public class TaskDto {
     public TaskDto(){
     };
 
-    public TaskDto(Long id, @NonNull String name, @NonNull LocalDate deadline, boolean completed,
+    public TaskDto(Long id, String name, LocalDate deadline, Boolean completed,
                    LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;

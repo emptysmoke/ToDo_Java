@@ -1,4 +1,5 @@
 package com.todo.demo.entity;
+import com.todo.demo.dto.TaskDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class Task {
 
     private LocalDate deadline;
 
-    private boolean completed;
+    private Boolean completed;
 
     private LocalDateTime createdAt;
 
@@ -29,6 +30,7 @@ public class Task {
 
     @PrePersist
     public void onCreate(){
+        this.completed = false;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -36,5 +38,12 @@ public class Task {
     @PreUpdate
     public void onUpdate(){
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // why void and not return Task?
+    public void updateFromDto(TaskDto dto){
+        this.setName(dto.getName());
+        this.setDeadline(dto.getDeadline());
+        this.setCompleted(dto.getCompleted());
     }
 }
