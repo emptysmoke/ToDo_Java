@@ -5,6 +5,7 @@ import com.todo.demo.entity.Task;
 import com.todo.demo.exception.ResourceNotFoundException;
 import com.todo.demo.mapper.TaskMapper;
 import com.todo.demo.repository.TaskRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +31,12 @@ public class TaskService {
         taskRepository.save(taskMapper.toEntity(dto));
     }
 
-    public void updateTask(Long id, TaskDto dto) {
+    @Transactional
+    public Task updateTask(Long id, TaskDto dto) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ID " + id + " のタスクは見つかりませんでした。"));
         task.updateFromDto(dto);
-        taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
     public void deleteTask(Long id) {

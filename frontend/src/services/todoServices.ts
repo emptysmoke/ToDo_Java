@@ -7,3 +7,9 @@ export const todoService = {
     return response.data;
   }
 }
+
+export const updateService = {
+  updateTodo: (id: number | undefined, task: Task | undefined) => {
+    api.put('/tasks/update/' + id, task);
+  }
+}

@@ -1,9 +1,11 @@
 package com.todo.demo.controller;
 
 import com.todo.demo.dto.TaskDto;
+import com.todo.demo.entity.Task;
 import com.todo.demo.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +31,8 @@ public class TaskController {
     }
 
     @PutMapping("/update/{id}")
-    public String updateTask(@PathVariable Long id, @Valid @RequestBody TaskDto dto) {
-        taskService.updateTask(id, dto);
-        return "タスクが更新されました。";
+    public Task updateTask(@PathVariable Long id, @Valid @RequestBody TaskDto dto) {
+        return taskService.updateTask(id, dto);
     }
 
     @DeleteMapping("/delete/{id}")
