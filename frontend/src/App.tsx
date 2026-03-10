@@ -1,11 +1,11 @@
-import { TodoList } from "./components/TodoList";
+import { TodoManager } from "./components/TodoManager";
 
 function App() {
   return (
       <div className='App'>
-        <TodoList />
+        <TodoManager />
       </div>
   );
 }
 
-export default App
+export default App 

@@ -25,9 +25,8 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String createTask(@Valid @RequestBody TaskDto dto) {
-        taskService.createTask(dto);
-        return "タスクの追加に成功しました。";
+    public Task createTask(@Valid @RequestBody TaskDto dto) {
+        return taskService.createTask(dto);
     }
 
     @PutMapping("/update/{id}")

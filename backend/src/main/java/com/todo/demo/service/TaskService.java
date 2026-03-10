@@ -27,8 +27,9 @@ public class TaskService {
         return taskMapper.toDtoList(taskRepository.findAllByOrderByCompletedAscDeadlineAsc());
     }
 
-    public void createTask(TaskDto dto) {
-        taskRepository.save(taskMapper.toEntity(dto));
+    @Transactional
+    public Task createTask(TaskDto dto) {
+        return taskRepository.save(taskMapper.toEntity(dto));
     }
 
     @Transactional
@@ -36,7 +37,7 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ID " + id + " のタスクは見つかりませんでした。"));
         task.updateFromDto(dto);
-        return taskRepository.save(task);
+        return taskRepository.saveAndFlush(task);
     }
 
     public void deleteTask(Long id) {

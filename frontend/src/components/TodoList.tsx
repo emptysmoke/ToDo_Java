@@ -1,51 +1,44 @@
-import { useEffect, useState } from 'react';
-import { todoService, updateService } from '../services/todoServices';
+import { todoService } from '../services/todoServices';
 import type { Task } from '../types/Task';
 
-export const TodoList = () => {
-  const [ tasks, setTasks ] = useState<Task[]>([]);
-  // const [ loading, setLoading ] = useState<boolean>(true);
-  const [ error, setError ] = useState<string | null>(null);
+interface TodoListProps {
+  tasks: Task[];
+  refreshList: () => Promise<void>;
+  notify: (text: string, type?: 'success' | 'error') => void;
+}
 
-  const fetchAllTasks = async () => {
+export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
+
+  const toggleTask = async (id: number | undefined) => {
+    if(!id) return;
+
+    const currentTask = tasks.find(t => t.id === id);
+    if(!currentTask) return;
+
     try {
-      const data = await todoService.getAllTodos();
-      setTasks((prevTasks) => {
-        const newData = [...data];
-        return newData
-      });
+      const updated = {...currentTask, completed: !currentTask.completed};
+      await todoService.updateTodo(id, updated);
+      await refreshList();
+      notify("更新しました！");
     } catch (err) {
-      setError("タスクの取得に失敗しました。")
+      notify("更新に失敗しました", "error");
+    }
+  };
+
+  const deleteTask = async (id: number | undefined) => {
+    if(!id) return;
+
+    const confirmed = window.confirm("このタスクを削除してもよろしいですか？");
+    if(!confirmed) return;
+
+    try {
+      await todoService.deleteTodo(id);
+      await refreshList();
+      notify("削除しました！");
+    } catch {
+      notify("削除に失敗しました", "error");
     }
   }
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      await fetchAllTasks();
-    };
-
-    fetchTasks();
-  }, []);
-
-    const toggleTask = async (id: number | undefined) => {
-      if(!id) return;
-      const currentTask = tasks.find(t => t.id === id);
-      if (!currentTask) return;
-      try {
-        const updated = {...currentTask, completed: !currentTask.completed};
-        await updateService.updateTodo(id, updated);
-        await fetchAllTasks();
-      } catch (err) {
-        setError("タスクの更新に失敗しました。")
-      }
-    };
-
-  // function getTaskbyId(id: number | undefined, tasks: Task[]) {
-  //   return tasks.find(task => task.id === id)
-  //   };
-
-  // if (loading) return <p>Loading</p>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>
 
   return (
     <div>
@@ -56,6 +49,7 @@ export const TodoList = () => {
             <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
             <span>{task.name}</span>
             <small> [期限: {task.deadline}]</small>
+            <button type="button" onClick={() => deleteTask(task.id)}>削除</button>
           </li>
         ))}
       </ul>

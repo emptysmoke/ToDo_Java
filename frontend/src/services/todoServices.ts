@@ -5,11 +5,17 @@ export const todoService = {
   getAllTodos: async(): Promise<Task[]> => {
     const response = await api.get<Task[]>('/tasks');
     return response.data;
-  }
-}
+  }, 
 
-export const updateService = {
-  updateTodo: (id: number | undefined, task: Task | undefined) => {
-    api.put('/tasks/update/' + id, task);
+  createTodo: async (task: Task | undefined) => {
+    return await api.post('/tasks/create', task);
+  }, 
+
+  updateTodo: async (id: number | undefined, task: Task | undefined) => {
+    return await api.put('/tasks/update/' + id, task);
+  }, 
+
+  deleteTodo: async (id: number | undefined) => {
+    return await api.delete('/tasks/delete/' + id);
   }
 }
