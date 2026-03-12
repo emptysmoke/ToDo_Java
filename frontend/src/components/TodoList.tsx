@@ -43,16 +43,20 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
   return (
     <div>
       <h2>ToDo リスト</h2>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
-            <span>{task.name}</span>
-            <small> [期限: {task.deadline}]</small>
-            <button type="button" onClick={() => deleteTask(task.id)}>削除</button>
-          </li>
-        ))}
-      </ul>
+      {tasks.length === 0 ? (
+        <p>タスクがありません。</p>
+      ) : (
+        <ul>
+          {tasks.map((task) => (
+            <li key={task.id}>
+              <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
+              <span>{task.name}</span>
+              <small> [期限: {task.deadline}]</small>
+              <button type="button" onClick={() => deleteTask(task.id)}>削除</button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

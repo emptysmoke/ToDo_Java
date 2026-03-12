@@ -35,6 +35,8 @@ export const TaskForm = ({ onTaskCreated, notify }: TaskFormProps) => {
           name="name"
           required
           maxLength={20}
+          onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('タスク名を入力してください。')}
+          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
           placeholder="タスクを入力..."
         />
         <input
@@ -42,6 +44,17 @@ export const TaskForm = ({ onTaskCreated, notify }: TaskFormProps) => {
           required
           type="date"
           min={today}
+          onInvalid={(e) => {
+            const target = e.target as HTMLInputElement;
+
+            if (target.validity.valueMissing) {
+              target.setCustomValidity('期限を選択してください。');
+            }
+            else if (target.validity.rangeUnderflow) {
+              target.setCustomValidity('本日以降の日付を選択してください。')
+            }
+          }}
+          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
         />
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "追加中..." : "追加"}</button>
