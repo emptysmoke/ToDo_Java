@@ -1,5 +1,6 @@
 import { todoService } from '../services/todoServices';
 import type { Task } from '../types/Task';
+import { useRef } from 'react';
 
 interface TodoListProps {
   tasks: Task[];
@@ -40,6 +41,30 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
     }
   }
 
+  // TODO: redundant. Create a function which will handle the repetative part.
+  const updateTask = async (id: number | undefined) => {
+    const nameInputRef = useRef<HTMLInputElement>(null);
+    const dateInputRef = useRef<HTMLInputElement>(null);
+    if(!id) return;
+
+    const currentTask = tasks.find(t => t.id === id);
+    if(!currentTask) return;
+
+    const newName = nameInputRef.current?.value;
+    const newDeadline = dateInputRef.current?.value;
+
+    if (newName && newDeadline) {
+      try {
+        const updated = {...currentTask, name: newName, deadline: newDeadline};
+        await todoService.updateTodo(id, updated);
+        await refreshList();
+        notify("更新しました！");
+      } catch (err) {
+        notify("更新に失敗しました", "error");
+      }
+    }
+  }
+
   return (
     <div>
       <h2>ToDo リスト</h2>
@@ -50,8 +75,9 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
           {tasks.map((task) => (
             <li key={task.id}>
               <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
-              <span>{task.name}</span>
-              <small> [期限: {task.deadline}]</small>
+              <input name="name" type="text" defaultValue={task.name}></input>
+              <span>期限：</span><input name="deadline" type="date" defaultValue={task.deadline}></input>
+              <button type="button" onClick={() => updateTask(task.id)}>修正</button>
               <button type="button" onClick={() => deleteTask(task.id)}>削除</button>
             </li>
           ))}
