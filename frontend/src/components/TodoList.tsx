@@ -8,7 +8,51 @@ interface TodoListProps {
   notify: (text: string, type?: 'success' | 'error') => void;
 }
 
+// leash for each item
+const TodoItem = ({ task, onUpdate, onDelete, onToggle }) => {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+
+  const today = new Date().toISOString().split('T')[0];
+
+  return (
+    <li>
+      <input type="checkbox" checked={task.completed} onChange={() => onToggle(task.id)} />
+      {!task.completed ? (
+      <>
+        <input type="text" ref={nameRef} defaultValue={task.name} 
+          required
+          maxLength={20}
+          onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('タスク名を入力してください。')}
+          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
+        />
+        <span>期限：</span>
+        <input type="date" ref={dateRef} defaultValue={task.deadline} 
+          required
+          min={today}
+          onInvalid={(e) => {
+            const target = e.target as HTMLInputElement;
+
+            if (target.validity.valueMissing) {
+              target.setCustomValidity('期限を選択してください。');
+            }
+            else if (target.validity.rangeUnderflow) {
+              target.setCustomValidity('本日以降の日付を選択してください。')
+            }
+          }}
+          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
+        />
+        <button type="button" onClick={() => onUpdate(task.id, nameRef.current?.value, dateRef.current?.value)}>修正</button>
+      </>
+    ) : (<span>{task.name} 期限：{task.deadline}</span>)
+    }
+    <button type="button" onClick={() => onDelete(task.id)}>削除</button>
+    </li>
+  );
+};
+
 export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
+  // Hooks need to be outside of function. Here at the top.
 
   const toggleTask = async (id: number | undefined) => {
     if(!id) return;
@@ -20,7 +64,6 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
       const updated = {...currentTask, completed: !currentTask.completed};
       await todoService.updateTodo(id, updated);
       await refreshList();
-      notify("更新しました！");
     } catch (err) {
       notify("更新に失敗しました", "error");
     }
@@ -42,20 +85,15 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
   }
 
   // TODO: redundant. Create a function which will handle the repetative part.
-  const updateTask = async (id: number | undefined) => {
-    const nameInputRef = useRef<HTMLInputElement>(null);
-    const dateInputRef = useRef<HTMLInputElement>(null);
+  const updateTask = async (id: number | undefined, name: string | undefined, deadline: string | undefined) => {
     if(!id) return;
 
     const currentTask = tasks.find(t => t.id === id);
     if(!currentTask) return;
 
-    const newName = nameInputRef.current?.value;
-    const newDeadline = dateInputRef.current?.value;
-
-    if (newName && newDeadline) {
+    if (name && deadline) {
       try {
-        const updated = {...currentTask, name: newName, deadline: newDeadline};
+        const updated = {...currentTask, name: name, deadline: deadline};
         await todoService.updateTodo(id, updated);
         await refreshList();
         notify("更新しました！");
@@ -73,13 +111,13 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
       ) : (
         <ul>
           {tasks.map((task) => (
-            <li key={task.id}>
-              <input type="checkbox" checked={task.completed} onChange={() => toggleTask(task.id)}/>
-              <input name="name" type="text" defaultValue={task.name}></input>
-              <span>期限：</span><input name="deadline" type="date" defaultValue={task.deadline}></input>
-              <button type="button" onClick={() => updateTask(task.id)}>修正</button>
-              <button type="button" onClick={() => deleteTask(task.id)}>削除</button>
-            </li>
+            <TodoItem
+              key={task.id}
+              task={task}
+              onUpdate={updateTask}
+              onDelete={deleteTask}
+              onToggle={toggleTask}
+             />
           ))}
         </ul>
       )}
