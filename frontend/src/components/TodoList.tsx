@@ -16,11 +16,11 @@ const TodoItem = ({ task, onUpdate, onDelete, onToggle }) => {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <li>
+    <li style={{display: 'flex', alignItems: 'center', gap: '10px'}} >
       <input type="checkbox" checked={task.completed} onChange={() => onToggle(task.id)} />
       {!task.completed ? (
-      <>
-        <input type="text" ref={nameRef} defaultValue={task.name} 
+      <form action={() => onUpdate(task.id, nameRef.current?.value, dateRef.current?.value)}>
+        <input type="text" ref={nameRef} defaultValue={task.name} style={{ margin: '0 10px 0 0'}}
           required
           maxLength={20}
           onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity('タスク名を入力してください。')}
@@ -42,8 +42,8 @@ const TodoItem = ({ task, onUpdate, onDelete, onToggle }) => {
           }}
           onInput={(e) => (e.target as HTMLInputElement).setCustomValidity('')}
         />
-        <button type="button" onClick={() => onUpdate(task.id, nameRef.current?.value, dateRef.current?.value)}>修正</button>
-      </>
+        <button type="submit">修正</button>
+      </form>
     ) : (<span>{task.name} 期限：{task.deadline}</span>)
     }
     <button type="button" onClick={() => onDelete(task.id)}>削除</button>
@@ -52,8 +52,6 @@ const TodoItem = ({ task, onUpdate, onDelete, onToggle }) => {
 };
 
 export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
-  // Hooks need to be outside of function. Here at the top.
-
   const toggleTask = async (id: number | undefined) => {
     if(!id) return;
 
@@ -85,6 +83,7 @@ export const TodoList = ({ tasks, refreshList, notify }: TodoListProps) => {
   }
 
   // TODO: redundant. Create a function which will handle the repetative part.
+  // TODO: fix it so it shows error 500 as well.
   const updateTask = async (id: number | undefined, name: string | undefined, deadline: string | undefined) => {
     if(!id) return;
 

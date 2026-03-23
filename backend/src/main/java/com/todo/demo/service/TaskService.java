@@ -23,8 +23,12 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    public List<TaskDto> getAllTasks() {
+    public List<TaskDto> getTasks() {
         return taskMapper.toDtoList(taskRepository.findAllByOrderByCompletedAscDeadlineAsc());
+    }
+
+    public List<TaskDto> getTasksByConditions(boolean completed) {
+        return taskMapper.toDtoList(taskRepository.findAllByCompleted(completed));
     }
 
     @Transactional

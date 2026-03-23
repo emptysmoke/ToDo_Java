@@ -5,7 +5,6 @@ import com.todo.demo.entity.Task;
 import com.todo.demo.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +19,11 @@ public class TaskController {
     public TaskController(TaskService taskService) {this.taskService = taskService;}
 
     @GetMapping
-    public List<TaskDto> getAll() {
-        return taskService.getAllTasks();
+    public List<TaskDto> getTasks(@RequestParam(required = false) String completed) {
+        if (completed == null || completed.isEmpty()) {
+            return taskService.getTasks();
+        }
+        return taskService.getTasksByConditions(Boolean.parseBoolean(completed));
     }
 
     @PostMapping("/create")
@@ -33,11 +35,6 @@ public class TaskController {
     public Task updateTask(@PathVariable Long id, @Valid @RequestBody TaskDto dto) {
         return taskService.updateTask(id, dto);
     }
-
-//    @PutMapping("/update/{id}")
-//    public Task updateTask(@PathVariable Long id, @Valid @RequestBody TaskDto dto) {
-//        return taskService.updateTask
-//    }
 
     @DeleteMapping("/delete/{id}")
     public String deleteTask(@PathVariable Long id) {

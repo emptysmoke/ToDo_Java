@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { todoService } from '../services/todoServices';
 import { TodoList } from "./TodoList";
 import { TaskForm } from "./TaskForm";
+import { TaskFilter } from "./TaskFilter";
 
 import type { Task } from '../types/Task';
 
@@ -40,6 +41,10 @@ export const TodoManager = () => {
         onTaskCreated={fetchAllTasks}
         notify={showNotification}
       />
+      <hr />
+      <TaskFilter
+        onConditionChange={fetchAllTasks}
+       />
       <hr />
       <TodoList 
         tasks={tasks} 
