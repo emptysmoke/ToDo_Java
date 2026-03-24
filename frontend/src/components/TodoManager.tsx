@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { todoService } from '../services/todoServices';
 import { TodoList } from "./TodoList";
@@ -11,11 +11,17 @@ import type { Task } from '../types/Task';
 export const TodoManager = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [message, setMessage] = useState<{text: string; type: 'success' | 'error' } | null>(null);
+  const [currentFilters, setCurrentFilters] = useState({ status: '', start: '', end: ''});
 
-  const fetchAllTasks = async () => {
-    const data = await todoService.getAllTodos();
-    setTasks([...data]);
-  };
+  const fetchTasks = useCallback(async (status = '', start = '', end = '') => {
+    try{
+      const data = await todoService.getTodos(status, start, end);
+      setTasks([...data]);
+      setCurrentFilters({ status, start, end });
+    } catch (err) {
+      console.error("Fetch failed", err);
+    }
+  }, []);
 
   const showNotification = (text: string, type: 'success' | 'error' = 'success' ) => {
     setMessage({ text, type }); 
@@ -25,12 +31,17 @@ export const TodoManager = () => {
     }, 3000);
   };
 
+  const handleFilterChange = (status: string, start: string, end: string) => {
+    fetchTasks(status, start, end);
+  }
+
+  const refreshList = () => {
+    fetchTasks(currentFilters.status, currentFilters.start, currentFilters.end);
+  }
+
   useEffect(() => {
-    const fetchTasks = async () => {
-      await fetchAllTasks();
-    };
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   return (
     <div>
@@ -38,17 +49,17 @@ export const TodoManager = () => {
       {message && <div className={`alert-${message.type}`}>{message.text}</div>}
 
       <TaskForm 
-        onTaskCreated={fetchAllTasks}
+        onTaskCreated={refreshList}
         notify={showNotification}
       />
       <hr />
       <TaskFilter
-        onConditionChange={fetchAllTasks}
+        onConditionChange={handleFilterChange}
        />
       <hr />
       <TodoList 
         tasks={tasks} 
-        refreshList={fetchAllTasks} 
+        refreshList={refreshList} 
         notify={showNotification} 
       />
     </div>

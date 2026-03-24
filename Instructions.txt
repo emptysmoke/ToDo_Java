@@ -142,12 +142,12 @@ AWSは使うが、仮想サーバーを立てます
 	条件③：すでに完了状態のタスクは編集不可とし、適切なエラーを返すこと。
 	条件④：存在しない ID を指定した場合、適切なエラーを返すこと。
 
-② タスク検索
-内容：クエリパラメータにより、タスク一覧を絞り込んで返却する。
-条件①：未完了または完了で絞り込めること。
-条件②：期間で絞り込めること。（2026-03-10から2026-03-17など。）
+☑️	② タスク検索
+	内容：クエリパラメータにより、タスク一覧を絞り込んで返却する。
+	条件①：未完了または完了で絞り込めること。
+	条件②：期間で絞り込めること。（2026-03-10から2026-03-17など。）
 条件③：条件①と条件②を組み合わせて絞り込めること。
-条件④：条件を指定しない場合は全件返却（既存の一覧取得と同様）とすること。
+	条件④：条件を指定しない場合は全件返却（既存の一覧取得と同様）とすること。
 
 ③ タスク並び替え
 内容：クエリパラメータにより、タスク一覧の並び順を指定して返却する。
@@ -185,6 +185,66 @@ AWSは使うが、仮想サーバーを立てます
 
 
 
+
+
+
+
+
+
+
+
+
+
+word type:
+verb 
+noun
+adj
+adv
+expression
+
+themes:
+daily
+food
+travel
+work
+emotion
+social
+abstract
+
+difficulty: (if I find a way to tell them apart)
+A1
+A2
+B1
+B2
+C1
+C2
+
+
+
+Create 1 deck: Spanish
+
+1 conjugation card per verb: 
+front: 
+Ir (present)
+
+back:
+voy
+vas
+va
+vamos
+vais
+vais van
+
+and then add 2-4 sentence cards with conjugated verbs, in forms which are used more often
+voy, vamos, va (or vas) is probably more used than van and vais)
+
+
+CAUTION
+some verbs need sentence learning because meanings change:
+quedar
+llevar
+hacer
+^sentences more important than conjugation table
 
 
 

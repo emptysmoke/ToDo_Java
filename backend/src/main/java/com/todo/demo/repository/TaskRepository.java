@@ -11,4 +11,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findAllByOrderByCompletedAscDeadlineAsc();
     List<Task> findAllByCompleted(Boolean completed);
+    List<Task> findAllByDeadlineBetween(LocalDate start, LocalDate end);
 }

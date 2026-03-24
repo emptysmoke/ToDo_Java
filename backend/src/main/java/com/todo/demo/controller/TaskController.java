@@ -19,11 +19,15 @@ public class TaskController {
     public TaskController(TaskService taskService) {this.taskService = taskService;}
 
     @GetMapping
-    public List<TaskDto> getTasks(@RequestParam(required = false) String completed) {
-        if (completed == null || completed.isEmpty()) {
-            return taskService.getTasks();
-        }
-        return taskService.getTasksByConditions(Boolean.parseBoolean(completed));
+    public List<TaskDto> getTasks(
+            @RequestParam(required = false) String completed,
+            @RequestParam(required = false) String start,
+            @RequestParam(required = false) String end) {
+        Boolean completedBoolean = (completed != null && !completed.isEmpty()) ? Boolean.valueOf(completed) : null;
+//        if (completed == null || completed.isEmpty()) {
+//            return taskService.getTasks();
+//        }
+        return taskService.getTasksByConditions(completedBoolean, start, end);
     }
 
     @PostMapping("/create")

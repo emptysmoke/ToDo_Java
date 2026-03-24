@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,8 +28,11 @@ public class TaskService {
         return taskMapper.toDtoList(taskRepository.findAllByOrderByCompletedAscDeadlineAsc());
     }
 
-    public List<TaskDto> getTasksByConditions(boolean completed) {
-        return taskMapper.toDtoList(taskRepository.findAllByCompleted(completed));
+    public List<TaskDto> getTasksByConditions(boolean completed, String startStr, String endStr) {
+        LocalDate start = (startStr != null && !startStr.isEmpty()) ? LocalDate.parse(startStr) : null;
+        LocalDate end = (endStr != null && !endStr.isEmpty()) ? LocalDate.parse(endStr) : null;
+
+        return taskMapper.toDtoList(taskRepository.findWithFilters(completed, start, end));
     }
 
     @Transactional

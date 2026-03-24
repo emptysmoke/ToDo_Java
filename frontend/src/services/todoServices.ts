@@ -2,8 +2,13 @@ import api from '../api/api';
 import type { Task }  from '../types/Task';
 
 export const todoService = {
-  getAllTodos: async(): Promise<Task[]> => {
-    const response = await api.get<Task[]>('/tasks');
+  getTodos: async(status: string = '', start: string = '', end: string = ''): Promise<Task[]> => {
+    const response = await api.get<Task[]>('/tasks', {
+      params: {
+        completed: status, 
+        startDate: start,
+        endDate: end
+      }});
     return response.data;
   }, 
 
