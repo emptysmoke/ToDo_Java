@@ -11,13 +11,13 @@ import type { Task } from '../types/Task';
 export const TodoManager = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [message, setMessage] = useState<{text: string; type: 'success' | 'error' } | null>(null);
-  const [currentFilters, setCurrentFilters] = useState({ status: '', start: '', end: ''});
+  const [currentFilters, setCurrentFilters] = useState({ status: '', start: '', end: '', sort: 'createdAt'});
 
-  const fetchTasks = useCallback(async (status = '', start = '', end = '') => {
+  const fetchTasks = useCallback(async (status = '', start = '', end = '', sort = 'createdAt') => {
     try{
-      const data = await todoService.getTodos(status, start, end);
+      const data = await todoService.getTodos(status, start, end, sort);
       setTasks([...data]);
-      setCurrentFilters({ status, start, end });
+      setCurrentFilters({ status, start, end, sort });
     } catch (err) {
       console.error("Fetch failed", err);
     }
@@ -31,12 +31,12 @@ export const TodoManager = () => {
     }, 3000);
   };
 
-  const handleFilterChange = (status: string, start: string, end: string) => {
-    fetchTasks(status, start, end);
+  const handleFilterChange = (status: string, start: string, end: string, sort: string) => {
+    fetchTasks(status, start, end, sort);
   }
 
   const refreshList = () => {
-    fetchTasks(currentFilters.status, currentFilters.start, currentFilters.end);
+    fetchTasks(currentFilters.status, currentFilters.start, currentFilters.end, currentFilters.sort);
   }
 
   useEffect(() => {

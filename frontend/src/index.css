@@ -66,3 +66,53 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.filter-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+}
+
+.label-row, .input-row {
+  display: grid;
+  grid-template-columns: 120px 20px 150px 20px 150px; 
+  text-align: center;
+  align-items: center;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.input-row select, 
+.input-row input {
+  flex: 1; 
+  min-width: 0; 
+  padding: 5px;
+}
+
+.separator {
+  color: #ccc;
+  font-weight: bold;
+}
+
+.button-row {
+  margin-top: 10px;
+}
+
+button {
+  padding: 5px 15px;
+  cursor: pointer;
+}
+

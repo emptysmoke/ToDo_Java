@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,12 +23,10 @@ public class TaskController {
     public List<TaskDto> getTasks(
             @RequestParam(required = false) String completed,
             @RequestParam(required = false) String start,
-            @RequestParam(required = false) String end) {
+            @RequestParam(required = false) String end,
+            @RequestParam(defaultValue = "createdAt") String sort) {
         Boolean completedBoolean = (completed != null && !completed.isEmpty()) ? Boolean.valueOf(completed) : null;
-//        if (completed == null || completed.isEmpty()) {
-//            return taskService.getTasks();
-//        }
-        return taskService.getTasksByConditions(completedBoolean, start, end);
+        return taskService.getTasksByConditions(completedBoolean, start, end, sort);
     }
 
     @PostMapping("/create")

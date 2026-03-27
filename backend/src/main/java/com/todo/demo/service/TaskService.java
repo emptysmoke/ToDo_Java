@@ -7,6 +7,7 @@ import com.todo.demo.mapper.TaskMapper;
 import com.todo.demo.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,15 +25,27 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    public List<TaskDto> getTasks() {
-        return taskMapper.toDtoList(taskRepository.findAllByOrderByCompletedAscDeadlineAsc());
-    }
+//    public List<TaskDto> getTasks() {
+//        return taskMapper.toDtoList(taskRepository.findAllByOrderByCompletedAscDeadlineAsc());
+//    }
 
-    public List<TaskDto> getTasksByConditions(boolean completed, String startStr, String endStr) {
-        LocalDate start = (startStr != null && !startStr.isEmpty()) ? LocalDate.parse(startStr) : null;
-        LocalDate end = (endStr != null && !endStr.isEmpty()) ? LocalDate.parse(endStr) : null;
+//    public List<TaskDto> getTasksByConditions(Boolean completed, String startStr, String endStr) {
+//        LocalDate start = (startStr != null && !startStr.isEmpty()) ? LocalDate.parse(startStr) : null;
+//        LocalDate end = (endStr != null && !endStr.isEmpty()) ? LocalDate.parse(endStr) : null;
+//
+//        return taskMapper.toDtoList(taskRepository.findWithFilters(completed, start, end));
+//    }
+    public List<TaskDto> getTasksByConditions(Boolean completed, String startStr, String endStr, String sortBy) {
+        LocalDate start = (startStr == null || startStr.isEmpty()) ? null : LocalDate.parse(startStr);
+        LocalDate end = (endStr == null || endStr.isEmpty()) ? null : LocalDate.parse(endStr);
 
-        return taskMapper.toDtoList(taskRepository.findWithFilters(completed, start, end));
+        Sort sort = switch (sortBy) {
+            case "deadlineAsc" -> Sort.by(Sort.Direction.ASC, "deadline");
+            case "deadlineDesc" -> Sort.by(Sort.Direction.DESC, "deadline");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
+
+        return taskMapper.toDtoList(taskRepository.findWithFilters(completed, start, end, sort));
     }
 
     @Transactional

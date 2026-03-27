@@ -39,8 +39,6 @@ public class Task {
     public void onUpdate(){
         this.updatedAt = LocalDateTime.now();
     }
-
-    // why void and not return Task?
     public void updateFromDto(TaskDto dto){
         this.setName(dto.getName());
         this.setDeadline(dto.getDeadline());
